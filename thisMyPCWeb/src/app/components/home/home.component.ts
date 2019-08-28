@@ -11,6 +11,10 @@ import {
   RouterModule,
   Routes
 } from '@angular/router';
+import * as $ from 'jquery';
+import {config} from '../config/config'
+
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -19,43 +23,24 @@ import {
 export class HomeComponent implements OnInit {
   password = '';
   email = '';
-  name = '';
-  fullName = '';
-  email_contribute = '';
+  firstName = '';
+  lastName = '';
   error_message = false;
   error_message_text = '';
-  error_message_contribute = false;
-  message_contribute_done = false;
-  error_message_contribute_text = '';
-  userCount = '';
-  pcCount = '';
-  contribute_alert_show = true;
+  
   constructor(private http: HttpClient, private router: Router) {}
   ngOnInit() {
-    console.log('%c My code DOESN’T work, I have no idea why. My code WORKS, I have no idea why! ', 'font-size: 20px; background: #0080ff; color: #fff');
-    const self = this;
-    // send  user auth and  test
-    /*this.http.get('http://thismypc.com:5000/siteInfo')
-            .subscribe(
-                (val: any) => {
-                   // console.log(val);
-                    self.userCount = val.data.userCount;
-                    self.pcCount = val.data.pcCount;
-                },
-                response => {
-                    // if offline
-                },
-                () => {
-                    console.log('The POST observable is now completed.');
-                });
-*/
+
+     const self = this;
+    
+    $("#close_contribute_alert").click(function(d){
+      $("#contribute_alert").remove();
+    });
   }
   resetModel() {
     this.error_message = false;
   }
-  contribute_alert_close() {
-    this.contribute_alert_show = false;
-  }
+ 
   onSubmit(e) {
     e.preventDefault();
     if (this.email === '' || this.password === '') {
@@ -68,16 +53,17 @@ export class HomeComponent implements OnInit {
       //  console.log(JSON.stringify(sendData));
       const headers = new HttpHeaders()
         .set('Content-Type', 'application/json');
-      this.http.post('http://thismypc.com:5000/login',
+      this.http.post(`${config.url}${config.port}/api/v1/user/login`,
           JSON.stringify(sendData), {
             headers
           })
         .subscribe(
           (val: any) => {
-            sessionStorage.setItem('name', val.data.name);
-            sessionStorage.setItem('auth', val.data.auth);
-            sessionStorage.setItem('id', val.data.id);
-            sessionStorage.setItem('ioSocketID', val.data.ioSocketID);
+            sessionStorage.setItem('firstName', val.data.firstName);
+            sessionStorage.setItem('lastName', val.data.lastName);
+            sessionStorage.setItem('authentication_key', val.data.authentication_key);
+            sessionStorage.setItem('userID', val.data.userID);
+          
             //   this.router.navigate(['/system']); //  redirect  to  system
             window.location.replace('/system');
           },
@@ -93,27 +79,28 @@ export class HomeComponent implements OnInit {
   }
   onRegister(e) {
     e.preventDefault();
-    if (this.email === '' || this.password === '' || this.name === '') {
+    if (this.email === '' || this.password === '' || this.firstName === '' || this.lastName === '') {
       this.error_message = true;
       this.error_message_text = 'username/password/name required';
     } else {
       const sendData = {};
       sendData['email'] = this.email;
       sendData['password'] = this.password;
-      sendData['name'] = this.name;
+      sendData['firstName'] = this.firstName;
+      sendData['lastName'] = this.lastName;
       /// console.log(JSON.stringify(sendData));
       const headers = new HttpHeaders()
         .set('Content-Type', 'application/json');
-      this.http.post('http://thismypc.com:5000/register',
+      this.http.post(`${config.url}${config.port}/api/v1/user/register`,
           JSON.stringify(sendData), {
             headers
           })
         .subscribe(
           (val: any) => {
-            sessionStorage.setItem('name', val.data.name);
-            sessionStorage.setItem('auth', val.data.auth);
-            sessionStorage.setItem('id', val.data.id);
-            sessionStorage.setItem('ioSocketID', val.data.ioSocketID);
+            sessionStorage.setItem('firstName', val.data.firstName);
+            sessionStorage.setItem('lastName', val.data.lastName);
+            sessionStorage.setItem('authentication_key', val.data.authentication_key);
+            sessionStorage.setItem('userID', val.data.userID);
             //   this.router.navigate(['/system']); //  redirect  to  system
             window.location.replace('/system');
           },
@@ -127,33 +114,5 @@ export class HomeComponent implements OnInit {
           });
     }
   }
-  onContribute(e) {
-    e.preventDefault();
-    if (this.email_contribute === '' || this.fullName === '') {
-      this.error_message_contribute = true;
-      this.error_message_contribute_text = 'Email / Name required';
-    } else {
-      const sendData = {};
-      sendData['email'] = this.email_contribute;
-      sendData['fullName'] = this.fullName;
-      const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json');
-      this.http.post('http://thismypc.com:5000/contribute',
-          JSON.stringify(sendData), {
-            headers
-          })
-        .subscribe(
-          (val: any) => {
-            this.message_contribute_done = true;
-          },
-          response => {
-            this.error_message_contribute = true;
-            this.error_message_contribute_text = response.error.message;
-            //  console.log("POST call in error", response);
-          },
-          () => {
-            //  console.log("The POST observable is now completed.");
-          });
-    }
-  }
+  
 }
