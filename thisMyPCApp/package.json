@@ -8,7 +8,9 @@
     "windose": "electron-packager . --asar --icon=assets/icon/logo.ico",
     "package-win": "electron-packager . ThisMyPC --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icon/logo.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"ThisMyPC\"",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Supun Lakmal",
   "license": "MIT",
@@ -33,7 +35,8 @@
     "node-fetch": "^2.4.1",
     "node-machine-id": "^1.1.10",
     "socket.io-stream": "^0.9.1",
-    "split-file": "^2.1.1"
+    "split-file": "^2.1.1",
+    "snyk": "^1.221.0"
   },
   "build": {
     "appId": "com.thismypc.thismypc",
@@ -47,5 +50,6 @@
       "allowToChangeInstallationDirectory": true,
       "oneClick": false
     }
-  }
+  },
+  "snyk": true
 }
